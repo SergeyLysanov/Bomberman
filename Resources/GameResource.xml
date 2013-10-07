@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<class type="resourceSystem.GameResource">
+	<countPlayers>1</countPlayers>
+	<mapWidth>23</mapWidth>
+	<mapHeight>15</mapHeight>
+	<boomRadius>4</boomRadius>
+	<polygon>32</polygon>
+	<speed>3</speed>
+</class>
+

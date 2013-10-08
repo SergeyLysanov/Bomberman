@@ -5,6 +5,7 @@ import base.*;
 import frontend.*;
 import gameMechanics.*;
 import databaseService.*;
+import messageSystem.*;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import org.junit.runners.Suite;
 	
 	DatabaseServiceImplTest.class,
 	ConnectionPoolTest.class,
+	UserDataSetImplTest.class,
 	
 	MsgUpdateUserDataTest.class,
 	MD5HashingTest.class,
@@ -29,6 +31,9 @@ import org.junit.runners.Suite;
 	
 	FrontendImplTest.class,
 	PageGeneratorTest.class,
+	
+	AddressServiceImplTest.class,
+	MessageSystemImplTest.class
 })
 public class TestAll {
 

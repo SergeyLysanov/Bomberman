@@ -32,11 +32,6 @@ public class Pair<A, B> {
     	return false;
     }
 
-    public String toString()
-    { 
-           return "(" + first + ", " + second + ")"; 
-    }
-
     public A getFirst() {
     	return first;
     }

@@ -1,5 +1,10 @@
 package frontend;
 
+import java.io.IOException;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import utils.UserSession;
 import base.AccountService;
@@ -21,6 +26,9 @@ public class FrontendImplTest
 	private MessageSystem 	messageSystem;
 	private AddressService	addressService;
 	
+	HttpServletResponse		resp;
+	HttpServletRequest 		req;
+	
 	public FrontendImplTest()
 	{
 		this.messageSystem = mock(MessageSystemImpl.class);
@@ -28,6 +36,9 @@ public class FrontendImplTest
 		
 		when(messageSystem.getAddressService()).thenReturn(addressService);
 		when(addressService.getAddress(AccountService.class)).thenReturn(new Address());
+		
+		req = mock(HttpServletRequest.class);
+		resp = mock(HttpServletResponse.class);
 	}
 
 	@Test
@@ -38,6 +49,43 @@ public class FrontendImplTest
 	}
 
 
+	@Test
+	public void testParseGetMainUrlWithSession() throws IOException 
+	{
+		FrontendImpl frontend = new FrontendImpl(messageSystem);
+		PageGenerator pageGenerator = new PageGenerator();
+		String sessionId = "sessionId";
+		UserSession userSession = frontend.CreateUserSession("name", sessionId, "pass", "email");
+		
+		HttpSession session = mock(HttpSession.class);
+		when(session.getId()).thenReturn(sessionId);
+		
+		when(req.toString()).thenReturn("");
+		when(req.getRequestURI()).thenReturn("/");
+		when(req.getSession(false)).thenReturn(session);
+		
+		String result = frontend.ParseGetRequestUrl(req, resp);
+		
+		verify(resp).setContentType("text/html; charset=UTF-8");
+		assertEquals(pageGenerator.getMainPage(userSession), result);
+	}
+	
+	@Test
+	public void testParseGetMainUrlWithNullSession() throws IOException 
+	{
+		FrontendImpl frontend = new FrontendImpl(messageSystem);
+		PageGenerator pageGenerator = new PageGenerator();
+		
+		when(req.toString()).thenReturn("");
+		when(req.getRequestURI()).thenReturn("/");
+		when(req.getSession(false)).thenReturn(null);
+		
+		String result = frontend.ParseGetRequestUrl(req, resp);
+		
+		verify(resp).setContentType("text/html; charset=UTF-8");
+		assertEquals(pageGenerator.getMainPage(null), result);
+	}
+	
 	@Test
 	public void testAuthorizeUser()
 	{
@@ -101,7 +149,7 @@ public class FrontendImplTest
 	{
 		FrontendImpl fixture = new FrontendImpl(new MessageSystemImpl());
 		String URL = "sdf";
-		UserSession userSession = new UserSession();
+		UserSession userSession = new UserSession("name", 1);
 
 		String result = fixture.ParseRequestUrl(URL, userSession);
 		assertEquals("", result);

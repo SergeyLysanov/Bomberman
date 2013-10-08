@@ -58,59 +58,16 @@ public class FrontendImpl extends HttpServlet implements Frontend
 	protected void doGet(HttpServletRequest req, 
 			HttpServletResponse resp) throws ServletException, IOException 
 	{
-		logger.info("doGet " + req.toString());
-	    PrintWriter pw = new PrintWriter(resp.getOutputStream());
-	    
-	    String requestUri = req.getRequestURI();
-	    HttpSession session = req.getSession(false);
-	    
-		if(requestUri.equals("/"))
-		{
-			if (session != null) 
-			{
-				String sessionId = session.getId();
-				UserSession userSession = sessionIdToSession.get(sessionId);
-				resp.setContentType("text/html; charset=UTF-8");
-				pw.println(pageGenerator.getMainPage(userSession));
-			}
-			else //new user
-			{
-				//resp.sendRedirect("/login");
-				logger.info("Get new user");
-				resp.setContentType("text/html; charset=UTF-8");
-				pw.println(pageGenerator.getMainPage(null));
-			}
-		}
-		else if(requestUri.equals("/register/status.json") ||
-				requestUri.equals("/login/status.json"))
-		{
-			resp.setContentType("application/json; charset=UTF-8");
-			String json = getUserSessionStatus(session);
-			pw.println(json);
-		}
-		else if(requestUri.equals("/logout"))
-		{
-			//delete session if exists
-			if (session != null) 
-			{
-				String sessionId = session.getId();
-				logout(sessionId);
-				session.invalidate();
-			}
-			
-			resp.sendRedirect("/");
-		}
-		else
-		{
-			resp.sendRedirect("/");
-		}
-		
-	    pw.flush();
+		PrintWriter pw = new PrintWriter(resp.getOutputStream());
+		String response = ParseGetRequestUrl(req, resp);
+		pw.println(response);
+		pw.flush();
 	}
 	
 	protected void doPost(HttpServletRequest req, 
 			HttpServletResponse resp) throws ServletException, IOException 
 	{
+		
 		logger.info("Post request: " + req.toString());
 		
 		HttpSession session = req.getSession(true);
@@ -186,6 +143,56 @@ public class FrontendImpl extends HttpServlet implements Frontend
 	    }
 	    
 	    return resp;
+	}
+	
+	public String ParseGetRequestUrl(HttpServletRequest req, HttpServletResponse resp) throws IOException
+	{
+		String response = "";
+		logger.info("doGet " + req.toString());
+	    
+	    String requestUri = req.getRequestURI();
+	    HttpSession session = req.getSession(false);
+	    
+		if(requestUri.equals("/"))
+		{
+			if (session != null) 
+			{
+				String sessionId = session.getId();
+				UserSession userSession = sessionIdToSession.get(sessionId);
+				resp.setContentType("text/html; charset=UTF-8");
+				response = pageGenerator.getMainPage(userSession);
+			}
+			else //new user
+			{
+				logger.info("Get new user");
+				resp.setContentType("text/html; charset=UTF-8");
+				response = pageGenerator.getMainPage(null);
+			}
+		}
+		else if(requestUri.equals("/register/status.json") ||
+				requestUri.equals("/login/status.json"))
+		{
+			resp.setContentType("application/json; charset=UTF-8");
+			String json = getUserSessionStatus(session);
+			response = json;
+		}
+		else if(requestUri.equals("/logout"))
+		{
+			//delete session if exists
+			if (session != null) 
+			{
+				String sessionId = session.getId();
+				logout(sessionId);
+				session.invalidate();
+			}
+			
+			resp.sendRedirect("/");
+		}
+		else{
+			resp.sendRedirect("/");
+		}
+		
+		return response;
 	}
 	
 	public void AuthorizeUser(UserSession userSession)

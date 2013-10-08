@@ -6,6 +6,7 @@ import frontend.*;
 import gameMechanics.*;
 import databaseService.*;
 import messageSystem.*;
+import utils.*;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
@@ -29,11 +30,16 @@ import org.junit.runners.Suite;
 	GameMechanicsImplTest.class,
 	UserCommandTest.class,
 	
+	//Frontend package
 	FrontendImplTest.class,
 	PageGeneratorTest.class,
 	
+	//messageSystem package
 	AddressServiceImplTest.class,
-	MessageSystemImplTest.class
+	MessageSystemImplTest.class,
+	
+	//utils package
+	PairTest.class
 })
 public class TestAll {
 

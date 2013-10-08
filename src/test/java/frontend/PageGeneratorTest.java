@@ -148,7 +148,43 @@ public class PageGeneratorTest
 		  
 		assertEquals(expectedResult.toString(), result);
 	}
+	
+	@Test
+	public void testParseWrongLoginUserSession()
+	{
+		PageGenerator generator = new PageGenerator();
 
+		UserSession userSession = new UserSession("name", "sessionId", "pass");
+		userSession.eSessionStatus.set(SessionStatus.eWrongLogin);
+
+		String result = generator.parseUserSession(userSession);
+
+		JSONObject expectedResult = new JSONObject();
+		expectedResult.put("userName", userSession.userName.get());
+		expectedResult.put("userId", userSession.userId.get());
+		expectedResult.put("status", "wrongLogin");
+		  
+		assertEquals(expectedResult.toString(), result);
+	}
+
+	@Test
+	public void testParseAuthorizedUserSession()
+	{
+		PageGenerator generator = new PageGenerator();
+
+		UserSession userSession = new UserSession("name", "sessionId", "pass");
+		userSession.eSessionStatus.set(SessionStatus.eAuthorized);
+
+		String result = generator.parseUserSession(userSession);
+
+		JSONObject expectedResult = new JSONObject();
+		expectedResult.put("userName", userSession.userName.get());
+		expectedResult.put("userId", userSession.userId.get());
+		expectedResult.put("status", "authorized");
+		  
+		assertEquals(expectedResult.toString(), result);
+	}
+	
 	public static void main(String[] args) {
 		new org.junit.runner.JUnitCore().run(PageGeneratorTest.class);
 	}

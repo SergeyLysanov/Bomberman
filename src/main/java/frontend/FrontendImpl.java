@@ -68,35 +68,9 @@ public class FrontendImpl extends HttpServlet implements Frontend
 			HttpServletResponse resp) throws ServletException, IOException 
 	{
 		
-		logger.info("Post request: " + req.toString());
-		
-		HttpSession session = req.getSession(true);
-	    PrintWriter pw = new PrintWriter(resp.getOutputStream());
-	    
-	    //parse request
-	    String userName = req.getParameter("name");
-	    String password = req.getParameter("password");
-    	String email = req.getParameter("email");
-	    String sessionId = session.getId();
-	    
-	    UserSession userSession = null;
-	    if (session.isNew()) //Create new session
-	    {	    
-	        //Create new session
-	    	session.setAttribute("created", new Date());
-	    	userSession = CreateUserSession(userName, sessionId, password, email);
-	    }
-	    else
-	    {
-	    	userSession = GetUserSession(sessionId);
-	    	userSession.userName.set(userName);
-	    	userSession.password.set(password);
-	    	userSession.email.set(email);
-	    }
-	    
-	    logger.info("User : " + userName + password);
-	    String response = ParseRequestUrl(req.getRequestURI(), userSession);
-	    
+		//logger.info("Post request: " + req.toString());
+		PrintWriter pw = new PrintWriter(resp.getOutputStream());
+	    String response = ParsePostRequestUrl(req);
     	pw.println(response);
 	    pw.flush();	
 	}
@@ -128,8 +102,34 @@ public class FrontendImpl extends HttpServlet implements Frontend
 		return frontendAddress;
 	}
 	
-	public String ParseRequestUrl(String URL, UserSession userSession)
+	public String ParsePostRequestUrl(HttpServletRequest req)
 	{
+	    //parse request
+		String URL = req.getRequestURI();
+	    String userName = req.getParameter("name");
+	    String password = req.getParameter("password");
+    	String email = req.getParameter("email");
+    	
+    	HttpSession session = req.getSession(true);
+	    String sessionId = session.getId();
+	    
+	    UserSession userSession = null;
+	    if (session.isNew()) //Create new session
+	    {	    
+	        //Create new session
+	    	session.setAttribute("created", new Date());
+	    	userSession = CreateUserSession(userName, sessionId, password, email);
+	    }
+	    else
+	    {
+	    	userSession = GetUserSession(sessionId);
+	    	userSession.userName.set(userName);
+	    	userSession.password.set(password);
+	    	userSession.email.set(email);
+	    }
+	    
+	    logger.info("User : " + userName + password);
+	    
 		String resp = "";
 	    if(URL.equals("/login"))
 	    {

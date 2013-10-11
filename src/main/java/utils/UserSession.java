@@ -21,13 +21,6 @@ public class UserSession
 		this.userId.set(userId);
 	}
 	
-	/*public UserSession(String userName, String pass, String email)
-	{
-		this.userName = userName;
-		this.password = pass;
-		this.email = email;
-	}*/
-	
 	public UserSession(String userName, String sessionId, String password)
 	{
 		this.userName.set(userName);

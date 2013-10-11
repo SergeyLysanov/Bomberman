@@ -8,7 +8,3 @@ public enum SessionStatus {
 	eUserExists,
 	eRegistered
 }
-
-/*public class SessionStatus {
-
-}*/

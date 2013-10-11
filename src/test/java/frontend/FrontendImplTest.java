@@ -87,6 +87,62 @@ public class FrontendImplTest
 	}
 	
 	@Test
+	public void testParseGetRequestSessionStatus() throws IOException
+	{
+		FrontendImpl frontend = new FrontendImpl(messageSystem);
+		
+		String sessionId = "sessionId";
+		UserSession userSession = frontend.CreateUserSession("name", sessionId, "pass", "email");
+		userSession.eSessionStatus.set(SessionStatus.eRegistered);
+		
+		HttpSession session = mock(HttpSession.class);
+		when(session.getId()).thenReturn(sessionId);
+		
+		when(req.toString()).thenReturn("");
+		when(req.getRequestURI()).thenReturn("/register/status.json");
+		when(req.getSession(false)).thenReturn(session);
+		
+		frontend.ParseGetRequestUrl(req, resp);
+		
+		verify(resp).setContentType("application/json; charset=UTF-8");
+	}
+	
+	@Test
+	public void testParseGetRequestLogout() throws IOException
+	{
+		FrontendImpl frontend = new FrontendImpl(messageSystem);
+		
+		String sessionId = "sessionId";
+		UserSession userSession = frontend.CreateUserSession("name", sessionId, "pass", "email");
+		userSession.eSessionStatus.set(SessionStatus.eAuthorized);
+		
+		HttpSession session = mock(HttpSession.class);
+		when(session.getId()).thenReturn(sessionId);
+		
+		when(req.toString()).thenReturn("");
+		when(req.getRequestURI()).thenReturn("/logout");
+		when(req.getSession(false)).thenReturn(session);
+		
+		frontend.ParseGetRequestUrl(req, resp);
+		
+		verify(session).invalidate();
+		verify(resp).sendRedirect("/");
+	}
+	
+	@Test
+	public void testParseGetRequestUnknownUrl() throws IOException
+	{
+		FrontendImpl frontend = new FrontendImpl(messageSystem);
+		
+		when(req.toString()).thenReturn("");
+		when(req.getRequestURI()).thenReturn("/hlhjklh");
+		when(req.getSession(false)).thenReturn(null);
+		
+		frontend.ParseGetRequestUrl(req, resp);
+		verify(resp).sendRedirect("/");
+	}
+	
+	@Test
 	public void testAuthorizeUser()
 	{
 		FrontendImpl frontend = new FrontendImpl(messageSystem);
@@ -117,41 +173,68 @@ public class FrontendImplTest
 	}
 
 	@Test
-	public void testParseRegisterUrl()
+	public void testParsePostRegisterUrl()
 	{
 		FrontendImpl frontend = new FrontendImpl(messageSystem);
-		String URL = "/register";
-		UserSession userSession = new UserSession();
-		userSession.userName.set("name");
 
-		String result = frontend.ParseRequestUrl(URL, userSession);
+		HttpSession session = mock(HttpSession.class);
+		when(session.getId()).thenReturn("sessionId");
+		when(session.isNew()).thenReturn(true);
+		
+		when(req.toString()).thenReturn("");
+		when(req.getRequestURI()).thenReturn("/register");
+		when(req.getSession(true)).thenReturn(session);
+		when(req.getParameter("name")).thenReturn("userName");
+		when(req.getParameter("password")).thenReturn("password");
+		when(req.getParameter("email")).thenReturn("email");
+		
+		String result = frontend.ParsePostRequestUrl(req);
 
 		verify(messageSystem).sendMessage(any(MsgRegisterUser.class));
 		assertEquals("wait registration", result);
 	}
 
 	@Test
-	public void testParseLoginUrl()
+	public void testParsePostLoginUrl()
 	{
 		FrontendImpl frontend = new FrontendImpl(messageSystem);
-		String URL = "/login";
-		UserSession userSession = new UserSession();
-		userSession.userName.set("name");
+		frontend.CreateUserSession("name", "sessionId", "pass", "mail");
 
-		String result = frontend.ParseRequestUrl(URL, userSession);
+		HttpSession session = mock(HttpSession.class);
+		when(session.getId()).thenReturn("sessionId");
+		when(session.isNew()).thenReturn(false);
+		
+		when(req.toString()).thenReturn("");
+		when(req.getRequestURI()).thenReturn("/login");
+		when(req.getSession(true)).thenReturn(session);
+		when(req.getParameter("name")).thenReturn("userName");
+		when(req.getParameter("password")).thenReturn("password");
+		when(req.getParameter("email")).thenReturn("email");
+	
+		String result = frontend.ParsePostRequestUrl(req);
 
 		verify(messageSystem).sendMessage(any(MsgAuthorizeUser.class));
 		assertEquals("wait authorization", result);
 	}
 
 	@Test
-	public void testParseUnknownUrl()
+	public void testParsePostUnknownUrl()
 	{
-		FrontendImpl fixture = new FrontendImpl(new MessageSystemImpl());
-		String URL = "sdf";
-		UserSession userSession = new UserSession("name", 1);
+		FrontendImpl frontend = new FrontendImpl(messageSystem);
+		frontend.CreateUserSession("name", "sessionId", "pass", "mail");
 
-		String result = fixture.ParseRequestUrl(URL, userSession);
+		HttpSession session = mock(HttpSession.class);
+		when(session.getId()).thenReturn("sessionId");
+		when(session.isNew()).thenReturn(false);
+		
+		when(req.toString()).thenReturn("");
+		when(req.getRequestURI()).thenReturn("/unknown");
+		when(req.getSession(true)).thenReturn(session);
+		when(req.getParameter("name")).thenReturn("userName");
+		when(req.getParameter("password")).thenReturn("password");
+		when(req.getParameter("email")).thenReturn("email");
+		
+		String result = frontend.ParsePostRequestUrl(req);
 		assertEquals("", result);
 	}
 

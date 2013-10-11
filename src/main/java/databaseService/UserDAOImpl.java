@@ -18,34 +18,6 @@ public class UserDAOImpl implements UserDAO
 	}
 
 	@Override
-	public UserDataSetImpl get(long id) throws SQLException 
-	{
-		TExecutor execT = new TExecutor();
-		String query = "SELECT idUser, userName, password, email  FROM User WHERE idUser = ?";
-		DelegatingPreparedStatement stmt= (DelegatingPreparedStatement) this.connection.prepareStatement(query);
-		stmt.setLong(1, id);
-		UserDataSetImpl user = execT.execQuery(connection, 
-				stmt, 
-				new TResultHandler<UserDataSetImpl>(){
-					public UserDataSetImpl handle(ResultSet result) throws SQLException{
-						if(result.next())
-						{
-							UserDataSetImpl user = new UserDataSetImpl(
-								result.getLong("idUser"), 
-								result.getString("userName"), 
-								result.getString("password"),
-								result.getString("email"));
-							return user;
-						}
-						else{
-							return null;
-						}
-					}
-		});
-		return user;
-	}
-
-	@Override
 	public UserDataSetImpl getByName(String name) throws SQLException {
 		TExecutor execT = new TExecutor();
 		String query = "SELECT idUser, userName, password, email FROM User WHERE userName = ?";

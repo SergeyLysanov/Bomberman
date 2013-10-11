@@ -19,7 +19,7 @@ import base.UserDataSet;
 public class DatabaseServiceImpl implements DatabaseService
 {
 	private static Logger logger = LoggerFactory.getLogger("DatabaseLogger", "./log/database-log.txt");
-	final private static ConnectionPool connectionPool = new ConnectionPool();
+	private static ConnectionPool connectionPool = new ConnectionPool("bomberman");
 	private Address databaseAddress = new Address();
 	private MessageSystem messageSystem;
 	
@@ -42,36 +42,7 @@ public class DatabaseServiceImpl implements DatabaseService
 	public Address getAddress() {
 		return databaseAddress;
 	}
-	/*
-	private void openConnection() throws SQLException
-	{
-		try {
-			Driver driver = (Driver)Class.forName("com.mysql.jdbc.Driver").newInstance();
-			DriverManager.registerDriver(driver);
-			StringBuilder url = new StringBuilder();
-			
-			//database url
-			url.
-			append("jdbc:mysql://").
-			append("localhost:").
-			append("3306/").
-			append("bomberman?").
-			append("user=bomberman&").
-			append("password=12345");
-			
-			this.connection = DriverManager.getConnection(url.toString());
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	*/
+
 	@Override
 	public void getUserData(UserSession userSession, Address from) //asynchro call
 	{	

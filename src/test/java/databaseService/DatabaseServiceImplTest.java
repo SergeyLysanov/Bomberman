@@ -16,7 +16,14 @@ import static org.mockito.Mockito.*;
 public class DatabaseServiceImplTest 
 {
 
-	MessageSystem messageSystem;
+	private MessageSystem messageSystem;
+	private int	Min = 10;
+	private int Max = Integer.MAX_VALUE;
+	
+	public DatabaseServiceImplTest()
+	{
+		messageSystem = mock(MessageSystemImpl.class);
+	}
 	
 	@Test
 	public void testDatabaseServiceImpl()
@@ -34,24 +41,51 @@ public class DatabaseServiceImplTest
 		assertNotNull(result);
 	}
 
-
+	@Test
+	public void testGetUserData()
+	{
+		DatabaseServiceImpl databaseService = new DatabaseServiceImpl(messageSystem);
+		UserSession userSession = new UserSession("test", "sessionId", "pass");
+		databaseService.getUserData(userSession, new Address());
+		
+		assertTrue(userSession.userId.get() > 0);
+	}
+	
+	@Test
+	public void testGetNonExistingUserData()
+	{
+		DatabaseServiceImpl databaseService = new DatabaseServiceImpl(messageSystem);
+		UserSession userSession = new UserSession("unknownName", "sessionId", "pass");
+		databaseService.getUserData(userSession, new Address());
+		
+		assertEquals(SessionStatus.eWrongLogin, userSession.eSessionStatus.get());
+	}
+	
+	@Test
+	public void testGetUserDataSynchro()
+	{
+		DatabaseServiceImpl databaseService = new DatabaseServiceImpl(messageSystem);
+		UserSession userSession = new UserSession("test", "sessionId", "pass");
+		UserDataSet dataSet = databaseService.getUserData(userSession);
+		
+		assertTrue(dataSet.getid() > 0);
+	}
+	
 	@Test
 	public void testRegisterUser()
 	{
-		DatabaseServiceImpl fixture = new DatabaseServiceImpl(new MessageSystemImpl());
-		UserSession userSession = new UserSession();
-		userSession.userName = new AtomicReference();
-		userSession.email = new AtomicReference();
-		userSession.password = new AtomicReference();
+		Integer userUID = Min + (int)(Math.random() * ((Max - Min) + 1));
+		String randomUser = "User" + userUID.toString();
+		
+		DatabaseServiceImpl database = new DatabaseServiceImpl(new MessageSystemImpl());
+		UserSession userSession = new UserSession(randomUser, "sessionId", "pass");
+		userSession.email.set("1@mail.ru"); 
+		
+		database.registerUser(userSession);
+		UserDataSet dataSet = database.getUserData(userSession);
+		
+		assertTrue(dataSet.getid() > 0);
 	}
-
-
-	@Before
-	public void setUp()
-	{
-		messageSystem = mock(MessageSystemImpl.class);
-	}
-
 
 	public static void main(String[] args) {
 		new org.junit.runner.JUnitCore().run(DatabaseServiceImplTest.class);

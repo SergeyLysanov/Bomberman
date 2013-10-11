@@ -13,6 +13,13 @@ public class ConnectionPool
 	private static Logger logger = LoggerFactory.getLogger("DatabaseLogger", "./log/database-log.txt");
     private static BasicDataSource bds;
 
+    public ConnectionPool(String sqliteDB)
+    {
+    	bds = new BasicDataSource();
+    	bds.setDriverClassName("org.sqlite.JDBC");
+    	bds.setUrl("jdbc:sqlite:./database/" + sqliteDB);
+    }
+    
     public ConnectionPool()
     {
     	bds = new BasicDataSource();

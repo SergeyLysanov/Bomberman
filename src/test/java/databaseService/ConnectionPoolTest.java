@@ -8,13 +8,23 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 
-public class ConnectionPoolTest {
+public class ConnectionPoolTest 
+{
+	private final String database = "bomberman";
 
 	@Test
-	public void testConnectionPool()
+	public void testSQLiteConnectionPool()
 	{
-		ConnectionPool result = new ConnectionPool();
+		ConnectionPool result = new ConnectionPool(database);
 		assertNotNull(result);
+	}
+	
+	@Test
+	public void testGetSQLiteConnection() throws SQLException
+	{
+		ConnectionPool result = new ConnectionPool(database);
+		Connection conn = result.getConnection();
+		assertNotNull(conn);
 	}
 
 	public static void main(String[] args) {

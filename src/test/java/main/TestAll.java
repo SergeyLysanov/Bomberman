@@ -8,11 +8,13 @@ import databaseService.*;
 import messageSystem.*;
 import utils.*;
 
+import org.junit.Ignore;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 
+@Ignore
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	AddressTest.class,
@@ -21,14 +23,19 @@ import org.junit.runners.Suite;
 	ConnectionPoolTest.class,
 	UserDataSetImplTest.class,
 	
+	//AccountService package
 	MsgUpdateUserDataTest.class,
 	MD5HashingTest.class,
 	AccountServiceImplTest.class,
 	SHA256HashingTest.class,
 	
+	//GameMechanics package
 	GameSocketImplTest.class,
 	GameMechanicsImplTest.class,
+	GameSessionTest.class,
 	UserCommandTest.class,
+	MsgAddExistingUserTest.class,
+	GameMapTest.class,
 	
 	//Frontend package
 	FrontendImplTest.class,
@@ -39,8 +46,12 @@ import org.junit.runners.Suite;
 	MessageSystemImplTest.class,
 	
 	//utils package
-	PairTest.class
+	PairTest.class,
+	
+	//main package
+	MainTest.class
 })
+
 public class TestAll {
 
 	public static void main(String[] args) {

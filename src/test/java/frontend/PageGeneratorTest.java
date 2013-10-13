@@ -68,8 +68,16 @@ public class PageGeneratorTest
 	{
 		PageGenerator generator = new PageGenerator();
 
-		UserSession userSession = new UserSession("name", "sessionId", "pass");
-		userSession.eSessionStatus.set(SessionStatus.eAuthorized);
+		UserSession userSession = new UserSession();
+		userSession.userId = new AtomicLong(1);
+		userSession.userName = new AtomicReference<String>("name");
+		userSession.email = new AtomicReference<String>("email");
+		userSession.sessionId = new AtomicReference<String>("sessionId");
+		userSession.password = new AtomicReference<String>("pass");
+		userSession.realPassword = new AtomicReference<String>("pass");
+		userSession.eSessionStatus = new AtomicReference<SessionStatus>(SessionStatus.eAuthorized);
+		
+		
 		String result = generator.getMainPage(userSession);
 		
         Template template = cfg.getTemplate("index.html");
@@ -93,7 +101,8 @@ public class PageGeneratorTest
 	{
 		PageGenerator generator = new PageGenerator();
 
-		UserSession userSession = new UserSession("name", "sessionId", "pass");
+		UserSession userSession = new UserSession("name", 1);
+		userSession.sessionId.set("sessionId");
 		userSession.eSessionStatus.set(SessionStatus.eWrongLogin);
 		String result = generator.getMainPage(userSession);
 		

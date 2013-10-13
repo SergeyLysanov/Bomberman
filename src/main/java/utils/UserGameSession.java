@@ -14,7 +14,6 @@ public class UserGameSession
 	public  Boolean			isAlive = true;
 	public  Boolean			isReady = false;
 
-	public UserGameSession(){};
 	public UserGameSession(String userName, int userId)
 	{
 		this.userName = userName;

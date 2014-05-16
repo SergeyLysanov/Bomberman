@@ -1,4 +1,4 @@
 Bomberman
 =============
 
-This is bomberman game server and unit tests
+This is bomberman game server on java and unit tests
